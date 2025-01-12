@@ -4,7 +4,7 @@
   "description": "This tool uses Reddit to gather posts, identifies trending stock mentions, and generates insights based on community activity. Perfect for monitoring financial subreddits like r/wallstreetbets, r/stocks, or any subreddit you choose!",
   "main": "app.js",
   "scripts": {
-    "scrape": "node app.js"
+    "scrape": "node --env-file=.env app.js"
   },
   "repository": {
     "type": "git",
@@ -25,6 +25,7 @@
   },
   "dependencies": {
     "node-fetch": "^2.6.7",
+    "openai": "^4.78.1",
     "prompt": "^1.1.0"
   }
 }

@@ -60,7 +60,10 @@ const invalidTickers = [
   "SHIT",
   "TFSA",
   "VOTE",
-  "YOLO"
+  "YOLO",
+  "FDA",
+  "AI",
+  "CEO"
 ];
 
 export default invalidTickers;

@@ -6,23 +6,39 @@ import prompt from "prompt";
 
 // api
 import BASE_URL from "./api/api.js";
-
 // data
 import ERROR_MESSAGE from "./data/errorMessage.js";
 import invalidTickers from "./data/invalidTickers.js";
 
 // functions
 import getSelfTexts from "./functions/formatRedditJsonResponse.js";
+import fetchFromOpenAI from "./functions/sendToChatGtp.js";
+
+// test
+// import testCompletion from "./test/testOpenAiConnection.js";
 
 const scrapeReddit = async () => {
   // start user prompt/input
   prompt.start();
 
+  // subreddit map
+  const subredditMap = {
+    1: "CanadianInvestor",
+    2: "investing",
+    3: "stocks",
+    4: "wallstreetbets",
+    5: "Canadapennystocks",
+    6: "pennystocks",
+  };
+
   // get userInput
-  const { subreddit, numberOfResults } = await prompt.get([
+  const { subreddit: subredditInput, numberOfResults } = await prompt.get([
     "subreddit",
     "numberOfResults",
   ]);
+
+  // translate number to subreddit name if necessary
+  const subreddit = subredditMap[subredditInput] || subredditInput;
 
   try {
     const response = await fetch(`${BASE_URL}/r/${subreddit}.json?limit=500`, {
@@ -41,6 +57,9 @@ const scrapeReddit = async () => {
 
     // call the getSelfTexts fn
     const selfTexts = getSelfTexts(data);
+
+    const ai = await fetchFromOpenAI(selfTexts);
+    console.log("open Ai", ai);
 
     // ticker regex
     const regex = /\$?\b[A-Z]{1,4}\b/g;
@@ -86,6 +105,9 @@ const scrapeReddit = async () => {
 };
 
 scrapeReddit();
+
+// test your connection to OpenAI
+// testCompletion();
 
 /*
 	--- stock/investing/trading subreddits ---
