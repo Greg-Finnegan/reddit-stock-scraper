@@ -25,7 +25,7 @@ const scrapeReddit = async () => {
   ]);
 
   try {
-    const response = await fetch(`${BASE_URL}/r/${subreddit}.json`, {
+    const response = await fetch(`${BASE_URL}/r/${subreddit}.json?limit=500`, {
       method: "GET",
       headers: {
         "User-Agent": "MyApp/1.0",
