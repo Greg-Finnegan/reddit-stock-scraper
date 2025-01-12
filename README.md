@@ -5,6 +5,7 @@ A Node.js-powered tool to fetch and analyze the most discussed stocks on any giv
 - ESLint (to enforce code quality)
 - Node-Fetch (for fetching the data)
 - Prompt (to get user input for custom/dynamic results)
+- OpenAi - experimental use of o1 mini to get stock info and sentiment
 
 ## Usage
 
