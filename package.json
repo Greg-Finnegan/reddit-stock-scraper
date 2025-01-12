@@ -1,7 +1,7 @@
 {
-  "name": "reddit-stock-scraper",
+  "name": "reddit-stock-talk-tracker",
   "version": "1.0.0",
-  "description": "-  Create list of finance/stock subreddits in an array\r - For each subreddit",
+  "description": "This tool uses Reddit to gather posts, identifies trending stock mentions, and generates insights based on community activity. Perfect for monitoring financial subreddits like r/wallstreetbets, r/stocks, or any subreddit you choose!",
   "main": "app.js",
   "scripts": {
     "scrape": "node app.js"
