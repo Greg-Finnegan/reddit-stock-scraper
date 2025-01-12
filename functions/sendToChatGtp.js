@@ -1,21 +1,17 @@
 import OpenAI from "openai";
 
 const openAiApiKey = process.env.OPENAI_API_KEY;
+const openai = new OpenAI({ apiKey: openAiApiKey });
 
-// Create a new instance of the OpenAI class with your API key
-const openai = new OpenAI({
-  apiKey: openAiApiKey, // Replace with your actual API key
-});
-
-const fetchFromOpenAI = (userInputText) => {
-  openai.chat.completions
-    .create({
-      model: "gpt-4o-mini-2024-07-18",
+const fetchFromOpenAI = async (userInputText) => {
+  try {
+    const response = await openai.chat.completions.create({
+      model: "gpt-4o-mini",
       messages: [
         {
           role: "developer",
           content:
-            "You extract companies and tickers addresses into JSON data.",
+            "You extract all companies/tickers mentioned into JSON data with a ‘sentiment’ field that is either bullish or bearish.",
         },
         {
           role: "user",
@@ -23,41 +19,46 @@ const fetchFromOpenAI = (userInputText) => {
         },
       ],
       response_format: {
-        // See /docs/guides/structured-outputs
         type: "json_schema",
         json_schema: {
           name: "ticker_extraction",
           schema: {
             type: "object",
             properties: {
-              ticker: {
-                type: "string",
-                description: "The stock ticker symbol of the company.",
-              },
-              company: {
-                type: "string",
-                description:
-                  "The name of the company associated with the ticker.",
-              },
-              occurrences: {
-                type: "number",
-                description:
-                  "The number of times the ticker or company name appears in the provided text.",
+              results: {
+                type: "array",
+                items: {
+                  type: "object",
+                  properties: {
+                    ticker: { type: "string" },
+                    company: { type: "string" },
+                    occurrences: { type: "number", description: "The number of times the ticker/company was mentioned." },
+                    sentiment: {
+                      type: "string",
+                      enum: ["bullish", "bearish"],
+                    },
+                    messaging: {
+                      items: { type: "string" },
+                      type: "array",
+                      description: "The messaging that the AI used to determine the sentiment.",
+                    },
+                  },
+                  required: ["ticker", "company", "occurrences", "sentiment"],
+                  additionalProperties: false,
+                },
               },
             },
-            required: ["ticker", "company", "occurrences"],
+            required: ["results"],
             additionalProperties: false,
           },
         },
       },
-    })
-    .then((response) => {
-      console.log(response.choices[0].message.content);
-      return response.choices;
-    })
-    .catch((error) => {
-      console.log(error);
     });
+    return JSON.parse(response.choices[0]?.message?.content);
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
 };
 
 export default fetchFromOpenAI;

@@ -24,6 +24,7 @@
     "eslint-plugin-import": "^2.22.1"
   },
   "dependencies": {
+    "lowdb": "^7.0.1",
     "node-fetch": "^2.6.7",
     "openai": "^4.78.1",
     "prompt": "^1.1.0"

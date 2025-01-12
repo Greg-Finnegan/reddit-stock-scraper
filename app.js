@@ -1,6 +1,7 @@
 /* eslint-disable import/extensions */
 // packages
-
+import { Low } from "lowdb";
+import { JSONFile } from "lowdb/node";
 import fetch from "node-fetch";
 import prompt from "prompt";
 
@@ -13,17 +14,19 @@ import invalidTickers from "./data/invalidTickers.js";
 // functions
 import getSelfTexts from "./functions/formatRedditJsonResponse.js";
 import fetchFromOpenAI from "./functions/sendToChatGtp.js";
+// import getFormattedDate from "./functions/getFormattedDate.js";
 
 // test
 // import testCompletion from "./test/testOpenAiConnection.js";
 
-const scrapeReddit = async () => {
+// eslint-disable-next-line no-unused-vars
+const manualRedditScraper = async () => {
   // start user prompt/input
   prompt.start();
 
   // subreddit map
   const subredditMap = {
-    1: "CanadianInvestor",
+    1: "StockMarket",
     2: "investing",
     3: "stocks",
     4: "wallstreetbets",
@@ -41,7 +44,7 @@ const scrapeReddit = async () => {
   const subreddit = subredditMap[subredditInput] || subredditInput;
 
   try {
-    const response = await fetch(`${BASE_URL}/r/${subreddit}.json?limit=500`, {
+    const response = await fetch(`${BASE_URL}/r/${subreddit}.json`, {
       method: "GET",
       headers: {
         "User-Agent": "MyApp/1.0",
@@ -104,7 +107,54 @@ const scrapeReddit = async () => {
   }
 };
 
-scrapeReddit();
+// eslint-disable-next-line no-unused-vars
+const automatedRedditScraper = async () => {
+  // Setup lowdb to dump data from OpenAI
+  const defaultData = { results: [] };
+  // const today = getFormattedDate();
+  const currentTimestamp = Math.floor(Date.now() / 1000); // Unix timestamp
+  const adapter = new JSONFile(`db-${currentTimestamp}.json`);
+  const db = new Low(adapter, defaultData);
+
+  await db.read();
+  db.data = db.data || { results: [] };
+
+  const subredditArray = ["stocks", "investing"];
+
+  for (const subreddit of subredditArray) {
+    try {
+      const response = await fetch(`${BASE_URL}/r/${subreddit}.json`, {
+        method: "GET",
+        headers: {
+          "User-Agent": "MyApp/1.0",
+          Accept: "application/json",
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
+      const data = await response.json(); // Process the response body as JSON
+
+      // Call the getSelfTexts function
+      const selfTexts = getSelfTexts(data);
+
+      const aiResponse = await fetchFromOpenAI(selfTexts);
+
+      // 'results' are pushed to the database
+      if (Array.isArray(aiResponse.results)) {
+        db.data.results.push(...aiResponse.results);
+      }
+
+      await db.write(); // Save the updated database
+    } catch (error) {
+      console.log(error.message || ERROR_MESSAGE);
+    }
+  }
+};
+
+automatedRedditScraper();
 
 // test your connection to OpenAI
 // testCompletion();
