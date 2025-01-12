@@ -1,0 +1,30 @@
+{
+  "name": "reddit-stock-scraper",
+  "version": "1.0.0",
+  "description": "-  Create list of finance/stock subreddits in an array\r - For each subreddit",
+  "main": "app.js",
+  "scripts": {
+    "scrape": "node app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Greg-Finnegan/reddit-stock-talk-tracker.git"
+  },
+  "keywords": [],
+  "author": "",
+  "type": "module",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Greg-Finnegan/reddit-stock-talk-tracker/issues"
+  },
+  "homepage": "https://github.com/Greg-Finnegan/reddit-stock-talk-tracker",
+  "devDependencies": {
+    "eslint": "^7.21.0",
+    "eslint-config-airbnb-base": "^14.2.1",
+    "eslint-plugin-import": "^2.22.1"
+  },
+  "dependencies": {
+    "node-fetch": "^2.6.7",
+    "prompt": "^1.1.0"
+  }
+}
