@@ -1,10 +1,8 @@
 # Reddit Stock Scraper
 
-This is a simple Node based Reddit scraper for finding which stocks are getting the most mentions. As of Mar 2, 2021, this project uses only the following packages:
+A Node.js-powered tool to fetch and analyze the most discussed stocks on any given subreddit. This tool uses Reddit to gather posts, identifies trending stock mentions, and generates insights based on community activity. Perfect for monitoring financial subreddits like r/wallstreetbets, r/stocks, or any subreddit you choose!
 
-- Cheerio (for the scraping)
 - ESLint (to enforce code quality)
-- ESM (to allow the use of import instead of require)
 - Node-Fetch (for fetching the data)
 - Prompt (to get user input for custom/dynamic results)
 
