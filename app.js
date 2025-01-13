@@ -1,6 +1,8 @@
 /* eslint-disable import/extensions */
 // packages
+// eslint-disable-next-line import/no-unresolved
 import { Low } from "lowdb";
+// eslint-disable-next-line import/no-unresolved
 import { JSONFile } from "lowdb/node";
 import fetch from "node-fetch";
 import prompt from "prompt";
@@ -107,19 +109,24 @@ const manualRedditScraper = async () => {
   }
 };
 
-// eslint-disable-next-line no-unused-vars
 const automatedRedditScraper = async () => {
-  // Setup lowdb to dump data from OpenAI
   const defaultData = { results: [] };
-  // const today = getFormattedDate();
-  const currentTimestamp = Math.floor(Date.now() / 1000); // Unix timestamp
+  const currentTimestamp = Math.floor(Date.now() / 1000);
   const adapter = new JSONFile(`db-${currentTimestamp}.json`);
   const db = new Low(adapter, defaultData);
 
   await db.read();
-  db.data = db.data || { results: [] };
+  db.data ||= { results: [] }; // ensures db.data is defined with { results: [] }
 
-  const subredditArray = ["stocks", "investing"];
+  const subredditArray = [
+  "stocks",
+  "pennystocks",
+  "wallstreetbets",
+  "investing",
+  "StockMarket",
+  "StocksAndTrading",
+  "TheRaceTo10Million",
+];
 
   for (const subreddit of subredditArray) {
     try {
@@ -135,29 +142,84 @@ const automatedRedditScraper = async () => {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
 
-      const data = await response.json(); // Process the response body as JSON
-
-      // Call the getSelfTexts function
-      const selfTexts = getSelfTexts(data);
-
+      const subredditData = await response.json(); // rename 'data' to 'subredditData'
+      const selfTexts = getSelfTexts(subredditData);
       const aiResponse = await fetchFromOpenAI(selfTexts);
 
-      // 'results' are pushed to the database
       if (Array.isArray(aiResponse.results)) {
-        db.data.results.push(...aiResponse.results);
+        // if aiResponse.results is an array add subreddits to each result
+        const subredditMappedResults = aiResponse.results.map((obj) => ({
+          ...obj,
+          subreddit: [subreddit]
+        }));
+        // push them directly into db.data.results
+        db.data.results.push(...subredditMappedResults);
       }
-
-      await db.write(); // Save the updated database
     } catch (error) {
       console.log(error.message || ERROR_MESSAGE);
     }
   }
+
+  // After the loop, do your combination logic once
+  const combined = [];
+  const currentResults = db.data.results;
+
+  currentResults.forEach((item) => {
+    const existing = combined.find(
+      (entry) => entry.ticker === item.ticker || entry.company === item.company
+    );
+
+    if (existing) {
+      // Sum up occurrences
+      existing.occurrences += item.occurrences;
+
+      // Check sentiment; if different, set to 'mixed'
+      if (existing.sentiment !== item.sentiment) {
+        existing.sentiment = "mixed";
+      }
+
+      // Merge messaging (avoid duplicates)
+      item.messaging.forEach((msg) => {
+        if (!existing.messaging.includes(msg)) {
+          existing.messaging.push(msg);
+        }
+      });
+
+      // Merge messaging (avoid duplicates)
+      item.subreddit.forEach((subreddit) => {
+        if (!existing.subreddit.includes(subreddit)) {
+          existing.subreddit.push(subreddit);
+        }
+      });
+    } else {
+      combined.push({ ...item });
+    }
+  });
+
+  // Sort by occurrences
+  combined.sort((a, b) => b.occurrences - a.occurrences);
+
+  // Write back to db
+  db.data.results = combined;
+  await db.write();
+
+  console.log("Scraping complete! Combined results written to db.");
 };
 
 automatedRedditScraper();
 
 // test your connection to OpenAI
 // testCompletion();
+
+// const subredditArray = [
+//   "stocks",
+//   "pennystocks",
+//   "wallstreetbets",
+//   "investing",
+//   "StockMarket",
+//   "StocksAndTrading",
+//   "TheRaceTo10Million",
+// ];
 
 /*
 	--- stock/investing/trading subreddits ---
