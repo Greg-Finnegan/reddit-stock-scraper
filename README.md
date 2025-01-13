@@ -6,6 +6,7 @@ A Node.js-powered tool to fetch and analyze the most discussed stocks on any giv
 - Node-Fetch (for fetching the data)
 - Prompt (to get user input for custom/dynamic results)
 - OpenAi - experimental use of o1 mini to get stock info and sentiment
+- lowDB - Simple and fast JSON database - created on runs where multiple subreddits are scanned - TODO combines the duplicates in feed and enriches data with price data.
 
 ## Usage
 
