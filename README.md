@@ -21,6 +21,4 @@ Clone the repo and and a `.env` file that has `OPENAI_API_KEY='your-api-key-here
 
 `npm run scrape`
 
-Then simply enter in the subreddit name you wish to scrape (case sensitive), and the number of results you want.
-
-And that's it!
+By default, that's it. It can do more, but that is the easiest way to get started.
