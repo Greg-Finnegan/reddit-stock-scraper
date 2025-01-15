@@ -11,7 +11,7 @@ A Node.js-powered tool to fetch and analyze the most discussed stocks on any giv
 ![Screenshot 2025-01-13 at 10 41 31 AM](https://github.com/user-attachments/assets/3be70ece-c121-4d97-8486-f63471edd53e)
 
 ## Manual Reddit Scraper
-###function name: manualRedditScraper
+function name: manualRedditScraper
 
 ### Prompts the User
 - Asks for a subreddit and the number of results to display.
@@ -34,8 +34,8 @@ A Node.js-powered tool to fetch and analyze the most discussed stocks on any giv
 ---
 
 ## Automated Reddit Scraper
-###function name: automatedRedditScraper
-### runs by default with `npm run start`
+function name: automatedRedditScraper
+runs by default with `npm run start`
 
 
 ### Scrapes Multiple Subreddits
