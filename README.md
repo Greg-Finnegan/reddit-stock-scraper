@@ -15,6 +15,8 @@ A Node.js-powered tool to fetch and analyze the most discussed stocks on any giv
 
 Make sure you have [Node.js](https://nodejs.org/en/) installed first.
 
+Clone the repo and and a `.env` file that has `OPENAI_API_KEY='your-api-key-here'`
+
 `npm install`
 
 `npm run scrape`
