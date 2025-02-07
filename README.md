@@ -14,7 +14,7 @@ Make sure you have [Node.js](https://nodejs.org/en/) installed first.
 
 `npm install`
 
-`npm run scrape`
+`npm run start`
 
 Then simply enter in the subreddit name you wish to scrape (case sensitive), and the number of results you want.
 

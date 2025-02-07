@@ -2,6 +2,7 @@
 // packages
 // eslint-disable-next-line import/no-unresolved
 import { Low } from "lowdb";
+import chalk from "chalk";
 // eslint-disable-next-line import/no-unresolved
 import { JSONFile } from "lowdb/node";
 import fetch from "node-fetch";
@@ -126,6 +127,7 @@ const automatedRedditScraper = async () => {
   "StockMarket",
   "StocksAndTrading",
   "TheRaceTo10Million",
+  "Daytrading",
 ];
 
   for (const subreddit of subredditArray) {
@@ -203,7 +205,8 @@ const automatedRedditScraper = async () => {
   db.data.results = combined;
   await db.write();
 
-  console.log("Scraping complete! Combined results written to db.");
+  // use chalk to colorize console.log
+  console.log(chalk.green("Scraping complete! Combined results written to db."));
 };
 
 automatedRedditScraper();
