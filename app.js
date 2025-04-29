@@ -17,7 +17,7 @@ import invalidTickers from "./data/invalidTickers.js";
 // functions
 import getSelfTexts from "./functions/formatRedditJsonResponse.js";
 import fetchFromOpenAI from "./functions/sendToChatGtp.js";
-// import getFormattedDate from "./functions/getFormattedDate.js";
+import getFormattedDate from "./functions/getFormattedDate.js";
 
 // test
 // import testCompletion from "./test/testOpenAiConnection.js";
@@ -118,17 +118,18 @@ const automatedRedditScraper = async () => {
 
   await db.read();
   db.data ||= { results: [] }; // ensures db.data is defined with { results: [] }
+  console.log(chalk.yellow("Fetching Reddit data..."));
 
   const subredditArray = [
-  "stocks",
-  "pennystocks",
-  "wallstreetbets",
-  "investing",
-  "StockMarket",
-  "StocksAndTrading",
-  "TheRaceTo10Million",
-  "Daytrading",
-];
+    "stocks",
+    "pennystocks",
+    "wallstreetbets",
+    "investing",
+    "StockMarket",
+    "StocksAndTrading",
+    "TheRaceTo10Million",
+    "Daytrading",
+  ];
 
   for (const subreddit of subredditArray) {
     try {
@@ -145,14 +146,20 @@ const automatedRedditScraper = async () => {
       }
 
       const subredditData = await response.json(); // rename 'data' to 'subredditData'
+  
+      console.log(chalk.yellow(`Processing ${subreddit}...`));
+
       const selfTexts = getSelfTexts(subredditData);
+      console.log(chalk.yellow("Sending to LLM for parsing..."));
       const aiResponse = await fetchFromOpenAI(selfTexts);
+      const date = getFormattedDate();
 
       if (Array.isArray(aiResponse.results)) {
         // if aiResponse.results is an array add subreddits to each result
         const subredditMappedResults = aiResponse.results.map((obj) => ({
           ...obj,
-          subreddit: [subreddit]
+          subreddit: [subreddit],
+          dateOfScan: date,
         }));
         // push them directly into db.data.results
         db.data.results.push(...subredditMappedResults);
@@ -163,6 +170,7 @@ const automatedRedditScraper = async () => {
   }
 
   // After the loop, do your combination logic once
+  console.log(chalk.yellow("Cleaning up results..."));
   const combined = [];
   const currentResults = db.data.results;
 
@@ -205,11 +213,16 @@ const automatedRedditScraper = async () => {
   db.data.results = combined;
   await db.write();
 
-  // use chalk to colorize console.log
-  console.log(chalk.green("Scraping complete! Combined results written to db."));
+  console.log(chalk.yellow("Syncing DB to Google Sheets"));
+  //const sheetsClient = await GoogleSheetsClient.create();
+
+  console.log(
+    chalk.green(`Scraping complete! ${combined.length} results written to db.`)
+  );
 };
 
 automatedRedditScraper();
+
 
 // test your connection to OpenAI
 // testCompletion();

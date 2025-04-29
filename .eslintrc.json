@@ -24,6 +24,7 @@
     "operator-linebreak": "off",
     "quotes": ["warn", "double"],
     "semi": "warn",
-    "spaced-comment": "off"
+    "spaced-comment": "off",
+    "eslint-plugin-import/extensions": "off",
   }
 }

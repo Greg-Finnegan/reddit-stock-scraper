@@ -4,7 +4,8 @@
   "description": "This tool uses Reddit to gather posts, identifies trending stock mentions, and generates insights based on community activity. Perfect for monitoring financial subreddits like r/wallstreetbets, r/stocks, or any subreddit you choose!",
   "main": "app.js",
   "scripts": {
-    "start": "node --env-file=.env app.js"
+    "start": "node --env-file=.env app.js",
+    "google-test": "node --env-file=.env functions/googleSheetsTest.js"
   },
   "repository": {
     "type": "git",
@@ -24,7 +25,9 @@
     "eslint-plugin-import": "^2.22.1"
   },
   "dependencies": {
+    "@google-cloud/local-auth": "^2.1.0",
     "chalk": "^5.4.1",
+    "googleapis": "^105.0.0",
     "lowdb": "^7.0.1",
     "node-fetch": "^2.6.7",
     "openai": "^4.78.1",

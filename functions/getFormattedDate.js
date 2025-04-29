@@ -1,10 +1,13 @@
 const getFormattedDate = () => {
-  const today = new Date();
-  const year = today.getFullYear();
-  const day = String(today.getDate()).padStart(2, "0");
-  const month = String(today.getMonth() + 1).padStart(2, "0");
-  const formattedToday = `${year}-${day}-${month}`;
-  return formattedToday;
+  const date = new Date();
+  let month = date.getMonth() // zero-based
+  const day = date.getDate();
+  const year = date.getFullYear();
+  if (month < 10) {
+    month = `0${month}`;
+  }
+  const formattedDate = `${month}/${day}/${year}`;
+  return formattedDate;
 };
 
 export default getFormattedDate;
